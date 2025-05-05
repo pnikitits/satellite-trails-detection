@@ -1,3 +1,5 @@
 __pycache__
 .vscode
 .DS_Store
+data
+real_data
