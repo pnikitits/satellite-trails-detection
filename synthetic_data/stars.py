@@ -7,10 +7,10 @@ def add_soft_stars(
     image,
     num_stars=50,
     min_size=0.1,
-    max_size=1,
+    max_size=1.0,
     seed=None,
     max_brightness=255,
-    min_brightness=50
+    min_brightness=30
 ):
     """
     Adds soft, glowing stars to an image — sharper and size-scaled brightness.
@@ -41,24 +41,30 @@ def add_soft_stars(
         radius = np.random.uniform(min_size, max_size)
 
         size_scale = (radius - min_size) / (max_size - min_size + 1e-5)
-        brightness = int(np.clip(size_scale * max_brightness, min_brightness, max_brightness))
+        rand_factor = np.random.uniform(0.8, 1.2)
+        brightness = int(np.clip(size_scale * max_brightness * rand_factor, min_brightness, max_brightness))
 
-        star_size = int(np.ceil(radius * 4))
-        if star_size < 3:
-            star_size = 3
+        star_size = int(np.ceil(radius * 6))
+        if star_size < 5:
+            star_size = 5
 
         star = Image.new('L', (star_size, star_size), 0)
         draw = ImageDraw.Draw(star)
 
         center = star_size // 2
-        r = max(radius, 0.5)
+
+
+        core_r = radius * 0.6
+        if core_r < 0.5:
+            core_r = 0.5
 
         draw.ellipse(
-            [ (center - r, center - r), (center + r, center + r) ],
+            [ (center - core_r, center - core_r), (center + core_r, center + core_r) ],
             fill=brightness
         )
 
-        blur_amount = max(radius * 0.5, 0.3)
+        
+        blur_amount = max(radius * 0.8, 0.5)
         blurred_star = star.filter(ImageFilter.GaussianBlur(radius=blur_amount))
         star_layer.paste((255, 255, 255, brightness), (x - center, y - center), mask=blurred_star)
 

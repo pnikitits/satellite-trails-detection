@@ -1,13 +1,17 @@
 from utils import generate_noise_image
 from stars import add_soft_stars
 from trails import add_satellite_trails
+from gradients import apply_gradient, apply_vignette
 import random
 import os
+from tqdm import tqdm
 
 
 def make_full_image(num_trails):
-    image = generate_noise_image(max_brightness=50)
+    image = generate_noise_image(mean_brightness=43, noise_std=5)
+    image = apply_vignette(image, strength=random.randint(5, 20), offset_x=random.uniform(-0.2, 0.2), offset_y=random.uniform(-0.2, 0.2))
     image = add_soft_stars(image, num_stars=random.randint(50, 100))
+    image = apply_gradient(image, brightness_delta=random.randint(0, 15), rotation=random.uniform(0, 359))
     return add_satellite_trails(image, num_trails=num_trails)
 
 
@@ -25,15 +29,15 @@ if __name__ == "__main__":
     classes = ['class0', 'class1']
     
     n_samples = {
-        'train': 100,
-        'val': 20,
-        'test': 30
+        'train': 6000,
+        'val': 2000,
+        'test': 2000
     }
 
     ensure_dirs(base_dir, splits, classes)
 
     for split in splits:
-        for i in range(n_samples[split]):
+        for i in tqdm(range(n_samples[split])):
             # class0 image (no trails)
             image0 = make_full_image(num_trails=0)
             class0_path = os.path.join(base_dir, split, 'class0', f'image_{i}.jpg')

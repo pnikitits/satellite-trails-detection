@@ -4,9 +4,10 @@ import matplotlib.pyplot as plt
 
 
 
-def generate_noise_image(width=200, height=200, min_brightness=0, max_brightness=255):
-    random_data = np.random.randint(min_brightness, max_brightness, (height, width, 3), dtype=np.uint8)
-    image = Image.fromarray(random_data, 'RGB')
+def generate_noise_image(width=200, height=200, mean_brightness=10, noise_std=3):
+    noise = np.random.normal(loc=mean_brightness, scale=noise_std, size=(height, width, 3))
+    noise = np.clip(noise, 0, 255).astype(np.uint8)
+    image = Image.fromarray(noise, 'RGB')
     return image
 
 
@@ -30,13 +31,25 @@ def sample_average_color(image, grid_points=20):
             break
     
     sampled_array = np.array(sampled_colors, dtype=np.float32)
+    
+    min_color = sampled_array.min(axis=0)
     avg_color = sampled_array.mean(axis=0)
-    return tuple(int(round(c)) for c in avg_color)
+    max_color = sampled_array.max(axis=0)
+    
+    min_value = np.mean(min_color)
+    avg_value = np.mean(avg_color)
+    max_value = np.mean(max_color)
+    
+    return min_value, avg_value, max_value
 
 
 
 def load_image(image_path):
     image = Image.open(image_path)
+    
+    image_array = np.array(image)
+    print("Numpy dtype:", image_array.dtype)
+    
     return image
 
 
