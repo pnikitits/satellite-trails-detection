@@ -1,6 +1,24 @@
 import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
+import random
+from stars import add_soft_stars
+from trails import add_satellite_trails
+from gradients import apply_gradient, apply_vignette
+
+
+def make_full_image(num_trails):
+    image = generate_noise_image(mean_brightness=random.randint(30, 40), noise_std=random.randint(3, 10))
+    image = add_soft_stars(image, num_stars=random.randint(60, 130), min_brightness=10, max_brightness=255)
+    
+    for _ in range(2):
+        image = apply_vignette(image, strength=random.randint(10, 20), offset_x=random.uniform(-0.2, 0.2), offset_y=random.uniform(-0.2, 0.2), feather=random.uniform(0.5, 0.9))
+    
+    for _ in range(4):
+        image = apply_gradient(image, brightness_delta=random.randint(0, 10), rotation=random.uniform(0, 359))
+        
+    image = add_satellite_trails(image, num_trails=num_trails)
+    return image
 
 
 
