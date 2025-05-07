@@ -8,10 +8,13 @@ from tqdm import tqdm
 
 
 def make_full_image(num_trails):
-    image = generate_noise_image(mean_brightness=43, noise_std=5)
-    image = apply_vignette(image, strength=random.randint(5, 20), offset_x=random.uniform(-0.2, 0.2), offset_y=random.uniform(-0.2, 0.2))
-    image = add_soft_stars(image, num_stars=random.randint(50, 100))
-    image = apply_gradient(image, brightness_delta=random.randint(0, 15), rotation=random.uniform(0, 359))
+    image = generate_noise_image(mean_brightness=random.randint(35, 45), noise_std=11)
+    image = apply_vignette(image, strength=random.randint(5, 25), offset_x=random.uniform(-0.2, 0.2), offset_y=random.uniform(-0.2, 0.2))
+    image = add_soft_stars(image, num_stars=random.randint(60, 130), min_brightness=10, max_brightness=255)
+    
+    for _ in range(4):
+        image = apply_gradient(image, brightness_delta=random.randint(0, 10), rotation=random.uniform(0, 359))
+        
     return add_satellite_trails(image, num_trails=num_trails)
 
 
