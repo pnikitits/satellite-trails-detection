@@ -1,6 +1,6 @@
 from sklearn.metrics import f1_score
 import torch
-from plots import plot_metrics
+from .plots import plot_metrics
 from tqdm import tqdm
 import torch.nn as nn
 import copy
@@ -10,7 +10,7 @@ import time
 THRESHOLD = 0.8
 
 
-def train_model(model, train_loader, val_loader, real_loader, criterion, optimiser, device, epochs=10, verbose=False):
+def train_model(model, train_loader, val_loader, real_loader, criterion, optimiser, device, epochs=10, verbose=False, return_history=False):
     history = {'train_loss': [],
                'val_loss': [],
                'real_loss': [],
@@ -108,7 +108,7 @@ def train_model(model, train_loader, val_loader, real_loader, criterion, optimis
         real_acc_0s = correct_0s / total_0s if total_0s > 0 else 0
         real_acc_1s = correct_1s / total_1s if total_1s > 0 else 0
 
-        print(f"real acc: 0s={real_acc_0s}, 1s={real_acc_1s}")
+        print(f"real acc: 0s={real_acc_0s}, 1s={real_acc_1s}") if verbose else None
         
         # Store the metrics
         history['train_loss'].append(train_loss)
@@ -130,9 +130,13 @@ def train_model(model, train_loader, val_loader, real_loader, criterion, optimis
             print(f"Epoch [{epoch+1}/{epochs}] \n  Train Loss: {train_loss:.4f} Acc: {train_acc:.4f} F1: {train_f1:.4f}"\
                 f" | Val Loss: {val_loss:.4f} Acc: {val_acc:.4f} F1: {val_f1:.4f}"\
                     f" | Real Loss: {real_loss:.4f} Acc: {real_acc:.4f} F1: {real_f1:.4f}")
-
-    plot_metrics(history)
+            
     
+    if return_history:
+        return history
+    else:
+        plot_metrics(history)
+
     
     
     

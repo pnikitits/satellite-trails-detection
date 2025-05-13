@@ -1,6 +1,6 @@
 from PIL import Image
 import torch
-from gradcam import generate_gradcam, plot_gradcam_on_image
+from .gradcam import generate_gradcam, plot_gradcam_on_image
 
 
 

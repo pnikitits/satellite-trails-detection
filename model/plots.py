@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
+import os
 
 
-def plot_metrics(history):
+def plot_metrics(history, display=True, save_at=None):
     epochs = range(1, len(history['train_loss']) + 1)
 
     plt.figure(figsize=(12, 4))
@@ -36,4 +37,10 @@ def plot_metrics(history):
     plt.legend()
 
     plt.tight_layout()
-    plt.show()
+    
+    if display:
+        plt.show()
+        
+    if save_at != None:
+        plt.savefig(os.path.join(save_at, 'history_plot.png'))
+        plt.clf()
